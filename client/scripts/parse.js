@@ -7,10 +7,6 @@ var Parse = {
     $.ajax({
       url: Parse.server,
       type: 'POST',
-      // data: {
-      //   order: '-createdAt',
-      //   string: JSON.stringify(message)
-      // },
       data: JSON.stringify(message),
       contentType: 'application/json',
       success: successCB,

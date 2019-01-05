@@ -5,34 +5,24 @@ var FormView = {
 
   initialize: function() {
     FormView.$form.on('submit', FormView.handleSubmit);
-    FormView.$refresh.on('click', App.fetch);
+    FormView.$refresh.on('click', MessagesView.initialize);
   },
 
   handleSubmit: function(event) {
     // Stop the browser from submitting the form
     event.preventDefault();
 
-    Messages.username = window.location.search.substr(10);
-    Messages.text = $('#message').val();
-    Messages.roomname = $('#rooms select').find(':selected').text();
+    var message = {};
 
-    console.log(Messages);
+    message.username = window.location.search.substr(10);
+    message.text = $('#message').val();
+    message.roomname = 'Lobby';
 
-    Parse.create(Messages, (data) => {
-      // examine the response from the server request:
-      console.log(data);
-
-      Messages.createdAt = data.createdAt;
-      Messages.objectId = data.objectId;
-
-      var html = MessageView.render(data.results[0]);
-      $('#chats').prepend(html);
-
-      var renderedMessage = MessageView.render(Messages);
-      $('#chats').prepend(renderedMessage);
+    Parse.create(message, (data) => {
+      message.createdAt = data.createdAt;
     });
 
-    console.log('click!');
+    MessagesView.renderMessage(message);
   },
 
   setStatus: function(active) {
