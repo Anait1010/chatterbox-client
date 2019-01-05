@@ -22,6 +22,18 @@ var App = {
       // examine the response from the server request:
       console.log(data);
 
+      // var i;
+      // var html = '';
+
+      for (var i = 0; i < data.results.length; i++) {
+        if (data.results[i].username === undefined || data.results[i].text === undefined) {
+          continue;
+        }
+
+        var html = MessageView.render(data.results[i]);
+        $('#chats').append(html);
+      }
+
       callback();
     });
   },
