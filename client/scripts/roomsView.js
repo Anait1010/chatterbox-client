@@ -1,27 +1,54 @@
 var RoomsView = {
 
-  $button: $('#rooms button'),
+  $button: $('#addRoom'),
   $select: $('#rooms select'),
 
   initialize: function() {
     App.startSpinner();
     RoomsView.render(App.stopSpinner);
+    RoomsView.$button.on('click', Rooms.add);
   },
 
   render: function(callback = ()=>{}) {
     Parse.readAll((data) => {
-
       for (var i = 0; i < data.results.length; i++) {
-        if (data.results[i].username === undefined || data.results[i].text === undefined) {
+        if (data.results[i].username === undefined || data.results[i].text === undefined || data.results[i].roomname === undefined || data.results[i].roomname === '' || $(`select option:contains(${data.results[i].roomname})`).length) {
           continue;
         }
-        var html = MessageView.render(data.results[i]);
-        $('#chats').append(html);
+
+        var html = RoomsView.template(data.results[i]);
+
+        _.escape(html);
+
+        RoomsView.$select.append(html);
       }
 
       callback();
     });
   },
+
+  template: _.template(`
+  <option value = ''> <%- roomname %> </option>
+`),
+
+  renderRoom: function() {
+    var newRoom = $('#room').val();
+
+    var insertedRoom = {
+      roomname: newRoom
+    };
+
+    var html = RoomsView.template(insertedRoom);
+
+    _.escape(html);
+
+    Parse.create(insertedRoom, (data) => {
+      insertedRoom.createdAt = data.createdAt;
+    });
+
+
+    RoomsView.$select.append(html);
+  }
 };
 
 // sanitize: function (unsafeMessage) {
